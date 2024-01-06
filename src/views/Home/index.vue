@@ -1,4 +1,7 @@
+<script setup>
+import HomeProduct from './components/HomeProduct.vue'
+</script>
+
 <template>
-    home页
-    <div style="height: 1000px;"></div>
+    <HomeProduct />
 </template>

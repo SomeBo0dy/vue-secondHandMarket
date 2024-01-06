@@ -1,25 +1,16 @@
 <script setup>
 import { getGoodsAPI } from "@/apis/goods";
 import { ref, onMounted } from "vue";
-import { onBeforeRouteUpdate, useRoute } from "vue-router"
-import GoodsItem from "@/views/Home/components/GoodsItem.vue";
+import GoodsItem from "./GoodsItem.vue";
 const goodsList = ref([]);
-// const params = {
-//   pageNum: 1,
-//   pageSize: 200,
-// };
-const route = useRoute();
-const getGoods = async (id = route.params.id) => {
-  const res = await getGoodsAPI(id);
+const getGoods = async () => {
+  const res = await getGoodsAPI();
   goodsList.value = res.data;
 };
 onMounted(() => {
+  console.log(goodsList);
   getGoods();
 });
-
-onBeforeRouteUpdate((to) => {
-  getGoods(to.params.id);
-})
 </script>
 
 <template>
