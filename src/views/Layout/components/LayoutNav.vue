@@ -1,12 +1,21 @@
-<script setup></script>
+<script setup>
+import { useUserStore } from "@/stores/user";
+import { ref } from "vue";
+
+const userStore = useUserStore();
+const userInfo = ref(userStore.userInfo);
+</script>
 
 <template>
   <nav class="app-topnav">
     <div class="container">
       <ul>
-        <template v-if="false">
+        <template v-if="userInfo.token">
           <li>
-            <a href="javascript:;"><i class="iconfont icon-user"></i>周杰伦</a>
+            <a href="javascript:;"
+              ><i class="iconfont icon-user"></i
+              >{{ userInfo.userInfoVo.nickName }}</a
+            >
           </li>
           <li>
             <el-popconfirm
