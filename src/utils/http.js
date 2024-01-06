@@ -1,5 +1,6 @@
 import axios from "axios";
-
+import { ElMessage } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
 const httpInstance = axios.create({
   // baseURL: "http://market.somebodycn.xyz:7886",
   baseURL: "http://localhost:7886",
@@ -17,7 +18,18 @@ httpInstance.interceptors.request.use(
 
 // axios响应式拦截器
 httpInstance.interceptors.response.use(
-  (res) => res.data,
+  (res) => {
+    res = res.data;
+    if (res.code != 200) {
+      ElMessage({
+        type: "warning",
+        message: res.msg,
+      });
+      return Promise.reject();
+    }
+    return res;
+  },
+
   (e) => {
     return Promise.reject(e);
   }

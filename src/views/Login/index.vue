@@ -1,12 +1,20 @@
 <script setup>
 import { ref } from "vue";
+import { ElMessage } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import { useRouter } from "vue-router";
+
+import { useUserStore } from "@/stores/user";
+
+const userStore = useUserStore();
 
 //表单对象
 const form = ref({
   account: "",
   password: "",
+  agree: true,
 });
-
+const userLoginType = "0";
 //规则对象
 const rules = {
   account: [{ required: true, message: "账号不得为空", trigger: "blur" }],
@@ -14,6 +22,30 @@ const rules = {
     { required: true, message: "密码不得为空", trigger: "blur" },
     { min: 6, max: 14, message: "密码长度为6-14个字符", trigger: "blur" },
   ],
+  agree: [
+    {
+      validator: (rule, value, callback) => {
+        if (value) {
+          callback();
+        } else {
+          callback(new Error("请勾选协议"));
+        }
+      },
+    },
+  ],
+};
+
+const formRef = ref(null);
+const router = useRouter();
+const doLogin = () => {
+  const { account, password } = form.value;
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      await userStore.getUserInfo({ account, password, type: userLoginType });
+      ElMessage({ type: "success", message: "登录成功" });
+      router.replace({ path: "/" });
+    }
+  });
 };
 </script>
 
@@ -39,6 +71,7 @@ const rules = {
         <div class="account-box">
           <div class="form">
             <el-form
+              ref="formRef"
               :model="form"
               :rules="rules"
               label-position="right"
@@ -51,12 +84,14 @@ const rules = {
               <el-form-item prop="password" label="密码">
                 <el-input v-model="form.password" />
               </el-form-item>
-              <el-form-item label-width="22px">
-                <el-checkbox size="large">
+              <el-form-item prop="agree" label-width="22px">
+                <el-checkbox size="large" v-model="form.agree">
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" class="subBtn">点击登录</el-button>
+              <el-button size="large" class="subBtn" @click="doLogin"
+                >点击登录</el-button
+              >
             </el-form>
           </div>
         </div>
