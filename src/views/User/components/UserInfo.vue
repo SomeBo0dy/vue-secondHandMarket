@@ -15,15 +15,24 @@ const userInfo = ref(userStore.userInfo.userInfoVo);
       </div>
       <h4>{{ userInfo?.nickName }}</h4>
     </div>
+    <div class="right">
+      <el-button size="large" @click="$router.replace('edit')"
+        >编辑个人信息</el-button
+      >
+    </div>
   </div>
   <div class="personal-info">
     <div class="info-details">
       <h1>个人信息</h1>
-      <p><strong>姓名:</strong> {{ userInfo?.nickName }}</p>
-      <p><strong>性别:</strong> {{ userInfo?.sex == "1" ? "男" : "女" }}</p>
+      <p><strong>昵称:</strong> {{ userInfo?.nickName }}</p>
+      <p>
+        <strong>性别:</strong>
+        {{ userInfo?.sex == "0" ? "男" : userInfo?.sex == "1" ? "女" : "未知" }}
+      </p>
       <p><strong>电话:</strong> {{ userInfo?.phoneNumber }}</p>
-      <p><strong>商品数量:</strong> {{ userInfo?.goodCount }}</p>
-      <p><strong>商品强制下架次数:</strong> {{ userInfo?.rejectCount }}</p>
+      <p><strong>QQ:</strong> {{ userInfo?.qqNumber }}</p>
+      <!-- <p><strong>商品数量:</strong> {{ userInfo?.goodCount }}</p> -->
+      <!-- <p><strong>商品强制下架次数:</strong> {{ userInfo?.rejectCount }}</p> -->
       <p><strong>个人介绍:</strong> {{ userInfo?.introduction }}</p>
     </div>
   </div>
@@ -57,7 +66,10 @@ p {
   height: 132px;
   background: url(@/assets/images/center-bg.png) no-repeat center / cover;
   display: flex;
-
+  .right {
+    margin-right: 50px;
+    margin-top: 50px;
+  }
   .user-meta {
     flex: 1;
     display: flex;

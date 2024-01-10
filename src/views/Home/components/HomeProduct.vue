@@ -5,19 +5,21 @@ import GoodsItem from "./GoodsItem.vue";
 const goodsList = ref([]);
 const getGoods = async () => {
   const res = await getGoodsAPI();
-  goodsList.value = res.data;
+  goodsList.value = res.data.rows;
 };
 onMounted(() => {
-  console.log(goodsList);
   getGoods();
 });
 </script>
 
 <template>
   <div class="home-product">
-    <div class="box">
+    <div class="holder-container" v-if="goodsList.length === 0">
+      <el-empty description="暂无相关商品" />
+    </div>
+    <div v-else class="box">
       <ul class="goods-list">
-        <li v-for="goods in goodsList.rows" :key="goods.id">
+        <li v-for="goods in goodsList" :key="goods.gId">
           <GoodsItem :goods="goods" />
         </li>
       </ul>

@@ -1,7 +1,7 @@
 <script setup>
 import { getGoodsAPI } from "@/apis/goods";
 import { ref, onMounted } from "vue";
-import { onBeforeRouteUpdate, useRoute } from "vue-router"
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import GoodsItem from "@/views/Home/components/GoodsItem.vue";
 const goodsList = ref([]);
 // const params = {
@@ -11,7 +11,7 @@ const goodsList = ref([]);
 const route = useRoute();
 const getGoods = async (id = route.params.id) => {
   const res = await getGoodsAPI(id);
-  goodsList.value = res.data;
+  goodsList.value = res.data.rows;
 };
 onMounted(() => {
   getGoods();
@@ -19,14 +19,17 @@ onMounted(() => {
 
 onBeforeRouteUpdate((to) => {
   getGoods(to.params.id);
-})
+});
 </script>
 
 <template>
   <div class="home-product">
-    <div class="box">
+    <div class="holder-container" v-if="goodsList.length === 0">
+      <el-empty description="暂无相关商品" />
+    </div>
+    <div v-else class="box">
       <ul class="goods-list">
-        <li v-for="goods in goodsList.rows" :key="goods.id">
+        <li v-for="goods in goodsList" :key="goods.id">
           <GoodsItem :goods="goods" />
         </li>
       </ul>

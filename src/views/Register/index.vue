@@ -3,17 +3,37 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import { useRouter } from "vue-router";
+import { registerAPI } from "@/apis/user";
 
-import { useUserStore } from "@/stores/user";
-
-const userStore = useUserStore();
-const type = ref(false);
 //表单对象
 const form = ref({
   account: "",
   password: "",
+  confirm: "",
+  phoneNumber: "",
+  qqNumber: "",
   agree: true,
 });
+const userType = "0";
+
+const equalToPassword = (rule, value, callback) => {
+  if (form.value.password !== value) {
+    callback(new Error("两次输入的密码不一致"));
+  } else {
+    callback();
+  }
+};
+const checkMobile = (rule, value, callback) => {
+  // 手机号正则表达式
+  const regMobile =
+    /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+  if (regMobile.test(value)) {
+    // 合法的手机号
+    return callback();
+  }
+  callback(new Error("请输入合法的手机号"));
+};
+
 //规则对象
 const rules = {
   account: [{ required: true, message: "账号不得为空", trigger: "blur" }],
@@ -21,6 +41,16 @@ const rules = {
     { required: true, message: "密码不得为空", trigger: "blur" },
     { min: 6, max: 14, message: "密码长度为6-14个字符", trigger: "blur" },
   ],
+  confirm: [
+    { required: true, message: "请再次输入您的密码", trigger: "blur" },
+    { min: 6, max: 14, message: "密码长度为6-14个字符", trigger: "blur" },
+    { required: true, validator: equalToPassword, trigger: "blur" },
+  ],
+  phoneNumber: [
+    { required: true, message: "手机号不得为空", trigger: "blur" },
+    { required: true, validator: checkMobile, trigger: "blur" },
+  ],
+  qqNumber: [{ required: true, message: "QQ号不得为空", trigger: "blur" }],
   agree: [
     {
       validator: (rule, value, callback) => {
@@ -36,22 +66,19 @@ const rules = {
 
 const formRef = ref(null);
 const router = useRouter();
-const doLogin = () => {
-  const { account, password } = form.value;
+const doRegister = () => {
+  const { account, password, phoneNumber, qqNumber } = form.value;
   formRef.value.validate(async (valid) => {
     if (valid) {
-      await userStore.getUserInfo({
+      await registerAPI({
         account,
         password,
-        type: !type.value ? "0" : "1",
+        phoneNumber,
+        qqNumber,
+        type: userType,
       });
-      ElMessage({ type: "success", message: "登录成功" });
-
-      if (!type.value) {
-        router.replace({ path: "/" });
-      } else {
-        router.replace({ path: "/admin" });
-      }
+      ElMessage({ type: "success", message: "注册成功" });
+      router.replace({ path: "/login" });
     }
   });
 };
@@ -74,7 +101,7 @@ const doLogin = () => {
     <section class="login-section">
       <div class="wrapper">
         <nav>
-          <a href="javascript:;">账户登录</a>
+          <a href="javascript:;">账户注册</a>
         </nav>
         <div class="account-box">
           <div class="form">
@@ -82,8 +109,8 @@ const doLogin = () => {
               ref="formRef"
               :model="form"
               :rules="rules"
-              label-position="right"
-              label-width="60px"
+              label-position="left"
+              label-width="80px"
               status-icon
             >
               <el-form-item prop="account" label="账户">
@@ -94,21 +121,27 @@ const doLogin = () => {
                   type="password"
                   show-password
                   v-model="form.password"
+                /> </el-form-item
+              ><el-form-item prop="confirm" label="确认密码">
+                <el-input
+                  type="password"
+                  show-password
+                  v-model="form.confirm"
                 />
               </el-form-item>
-              <el-form-item prop="type" label-width="22px">
-                <el-checkbox size="large" v-model="type">
-                  管理员登录
-                </el-checkbox>
+              <el-form-item prop="phoneNumber" label="手机号">
+                <el-input v-model="form.phoneNumber" />
+              </el-form-item>
+              <el-form-item prop="qqNumber" label="QQ">
+                <el-input v-model="form.qqNumber" />
               </el-form-item>
               <el-form-item prop="agree" label-width="22px">
                 <el-checkbox size="large" v-model="form.agree">
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-
-              <el-button size="large" class="subBtn" @click="doLogin"
-                >点击登录</el-button
+              <el-button size="large" class="subBtn" @click="doRegister"
+                >点击注册</el-button
               >
               <div
                 style="
@@ -119,13 +152,14 @@ const doLogin = () => {
                   align-items: center;
                 "
               >
-                <RouterLink to="/register">去注册</RouterLink>
+                <RouterLink to="/login">去登录</RouterLink>
               </div>
             </el-form>
           </div>
         </div>
       </div>
     </section>
+
     <footer class="login-footer">
       <div class="container">
         <p>
@@ -195,7 +229,7 @@ const doLogin = () => {
     background: #fff;
     position: absolute;
     left: 50%;
-    top: 54px;
+    top: 10px;
     transform: translate3d(100px, 0, 0);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 

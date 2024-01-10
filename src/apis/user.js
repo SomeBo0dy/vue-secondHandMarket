@@ -10,3 +10,17 @@ export const loginAPI = ({ account, password, type }) => {
     },
   });
 };
+export const registerAPI = (data) => {
+  return request({
+    url: "/register",
+    method: "POST",
+    data,
+  });
+};
+export const updateUserInfoAPI = (user) => {
+  return request({
+    url: "/users/info",
+    method: "PUT",
+    data: user,
+  });
+};

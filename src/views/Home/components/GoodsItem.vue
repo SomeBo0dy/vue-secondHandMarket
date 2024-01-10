@@ -12,6 +12,7 @@ defineProps({
     <p class="name ellipsis">{{ goods.name }}</p>
     <p class="title ellipsis">{{ goods.title }}</p>
     <p class="price">&yen;{{ goods.prize }}</p>
+    <p class="state" v-if="goods.state == '1'">待审核</p>
   </RouterLink>
 </template>
 
@@ -49,6 +50,10 @@ defineProps({
   .price {
     color: $priceColor;
     font-size: 20px;
+  }
+  .state {
+    color: $priceColor;
+    font-size: 15px;
   }
 }
 </style>

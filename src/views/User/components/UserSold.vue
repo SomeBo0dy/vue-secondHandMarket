@@ -1,16 +1,12 @@
 <script setup>
-import { getUserOrder } from "@/apis/order";
+import { getUserDeal, updateOrder } from "@/apis/order";
 import { onMounted, ref } from "vue";
-import { addLink } from "@/apis/chat";
-import { useRouter } from "vue-router";
-const router = useRouter();
-
 // tab列表
 const tabTypes = [
-  { name: "all", label: "全部订单" },
-  { name: "proceessing", label: "订单处理中" },
-  { name: "success", label: "订单完成" },
-  { name: "failed", label: "订单失败" },
+  { name: "all", label: "全部交易" },
+  { name: "proceessing", label: "交易处理中" },
+  { name: "success", label: "交易完成" },
+  { name: "failed", label: "交易失败" },
 ];
 // 订单列表
 const orderList = ref([]);
@@ -20,26 +16,29 @@ const params = ref({
   pageSize: 3,
   orderState: 0,
 });
-const getOrderList = async () => {
-  const res = await getUserOrder(params.value);
+const getDealList = async () => {
+  const res = await getUserDeal(params.value);
   orderList.value = res.data.rows;
   total.value = Number(res.data.totalNum);
 };
 
-onMounted(() => getOrderList());
+onMounted(() => getDealList());
 
 const tabChange = (type) => {
   params.value.orderState = type;
-  getOrderList();
+  getDealList();
 };
 const pageChange = (page) => {
   params.value.pageNum = page;
-  getOrderList();
+  getDealList();
 };
-const chatToOwner = async (ownerId) => {
-  console.log(ownerId);
-  await addLink(ownerId);
-  router.push("/user/chat");
+const accept = (order) => {
+  order.state = 1;
+  updateOrder(order);
+};
+const reject = (order) => {
+  order.state = 2;
+  updateOrder(order);
 };
 </script>
 
@@ -55,7 +54,7 @@ const chatToOwner = async (ownerId) => {
 
       <div class="main-container">
         <div class="holder-container" v-if="orderList.length === 0">
-          <el-empty description="暂无订单数据" />
+          <el-empty description="暂无交易数据" />
         </div>
         <div v-else>
           <!-- 订单列表 -->
@@ -90,22 +89,18 @@ const chatToOwner = async (ownerId) => {
                   </li>
                 </ul>
               </div>
-              <div class="column amount" v-if="order.state == 1">
-                <p>
-                  卖方同学已同意交易，可通过<br />QQ：{{ order.qqNumber }}<br />
-                  联系对方，商讨交接事宜
-                </p>
-              </div>
-              <div class="column amount" v-if="order.state == 1">
-                <el-button
-                  type="success"
-                  size="large"
-                  @click="chatToOwner(order.ownerId)"
-                  >联系卖家</el-button
-                >
-              </div>
               <div class="column amount">
                 <p class="red">¥{{ order.prize }}</p>
+              </div>
+              <div class="column amount" v-if="order.state == 0">
+                <el-button type="primary" size="large" @click="accept(order)"
+                  >接受交易</el-button
+                >
+              </div>
+              <div class="column amount" v-if="order.state == 0">
+                <el-button type="danger" size="large" @click="reject(order)"
+                  >拒绝交易</el-button
+                >
               </div>
             </div>
           </div>

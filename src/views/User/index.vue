@@ -11,9 +11,19 @@
         <div class="links">
           <RouterLink to="/user/goods">我的商品</RouterLink>
         </div>
+        <h4>商品管理</h4>
+        <div class="links">
+          <RouterLink to="/user/addGoods">上架商品</RouterLink>
+          <RouterLink to="/user/deleteGoods">下架商品</RouterLink>
+        </div>
         <h4>交易管理</h4>
         <div class="links">
           <RouterLink to="/user/order">我的订单</RouterLink>
+          <RouterLink to="/user/sold">我的交易</RouterLink>
+        </div>
+        <h4>消息管理</h4>
+        <div class="links">
+          <RouterLink to="/user/chat">聊天</RouterLink>
         </div>
       </div>
     </div>

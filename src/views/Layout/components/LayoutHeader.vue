@@ -1,6 +1,10 @@
 <script setup>
 import { useCategoryStore } from "@/stores/category";
+import { useUserStore } from "@/stores/user";
+import { ref } from "vue";
 
+const userStore = useUserStore();
+const userInfo = ref(userStore.userInfo.userInfoVo);
 const categoryStore = useCategoryStore();
 </script>
 
@@ -10,13 +14,15 @@ const categoryStore = useCategoryStore();
       <h1 class="logo">
         <RouterLink to="/">福鱼</RouterLink>
       </h1>
-      <ul class="app-header-nav">
+      <ul class="app-header-nav" v-if="userInfo.type === '0'">
         <li
           class="home"
           v-for="item in categoryStore.categoryList"
           :key="item.id"
         >
-          <RouterLink active-class="active" :to="`/category/${item.id}`">{{ item.name }}</RouterLink>
+          <RouterLink active-class="active" :to="`/category/${item.id}`">{{
+            item.name
+          }}</RouterLink>
         </li>
       </ul>
       <!-- <div class="search">

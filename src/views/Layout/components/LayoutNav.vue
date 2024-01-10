@@ -35,10 +35,10 @@ const confirm = () => {
               </template>
             </el-popconfirm>
           </li>
-          <li>
+          <li v-if="userInfo.userInfoVo.type === '0'">
             <RouterLink to="/user/order">我的订单</RouterLink>
           </li>
-          <li>
+          <li v-if="userInfo.userInfoVo.type === '0'">
             <RouterLink to="/user/info">用户中心</RouterLink>
           </li>
         </template>

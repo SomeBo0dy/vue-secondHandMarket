@@ -2,12 +2,18 @@
 import { getGoodsDetailById } from "@/apis/goods";
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
+import { useGoodsStore } from "@/stores/goods";
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
+const userInfo = ref(userStore.userInfo);
 
+const goodsStore = useGoodsStore();
 const goods = ref({});
 const route = useRoute();
 const getGoods = async () => {
   const res = await getGoodsDetailById(route.params.id);
   goods.value = res.data;
+  goodsStore.goods = res.data;
 };
 
 onMounted(() => getGoods());
@@ -16,6 +22,10 @@ onMounted(() => getGoods());
 <template>
   <div class="xtx-goods-page">
     <div class="container" v-if="goods.gId">
+      <div class="owner-info">
+        <el-avatar :size="60" :src="goods.avatar" />
+        <h2>{{ goods.userName }}</h2>
+      </div>
       <!-- 商品信息 -->
       <div class="info-container">
         <div>
@@ -24,7 +34,7 @@ onMounted(() => getGoods());
               <!-- 图片预览区 -->
               <img v-img-lazy="goods.thumbnail" :key="goods.gId" />
               <!-- 统计数量 -->
-              <ul class="goods-sales">
+              <!-- <ul class="goods-sales">
                 <li>
                   <p>销量人气</p>
                   <p>{{ goods.wantCount }}</p>
@@ -35,7 +45,7 @@ onMounted(() => getGoods());
                   <p>200+</p>
                   <p><i class="iconfont icon-comment-filling"></i>查看评价</p>
                 </li>
-              </ul>
+              </ul> -->
             </div>
             <div class="spec">
               <!-- 商品信息区 -->
@@ -50,7 +60,14 @@ onMounted(() => getGoods());
 
               <!-- 按钮组件 -->
               <div>
-                <el-button size="large" class="btn"> 想要 </el-button>
+                <el-button
+                  v-if="goods.userId != userInfo.userInfoVo.id"
+                  size="large"
+                  class="btn"
+                  @click="$router.push('/checkout')"
+                >
+                  想要
+                </el-button>
               </div>
             </div>
           </div>
@@ -75,6 +92,24 @@ onMounted(() => getGoods());
 
 <style scoped lang="scss">
 .xtx-goods-page {
+  .owner-info {
+    background: #fff;
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 80px;
+    width: 100%;
+
+    // justify-content: center;
+    align-items: center;
+
+    .el-avatar {
+      margin-left: 60px;
+    }
+    h2 {
+      margin-left: 20px;
+    }
+  }
   .goods-info {
     min-height: 600px;
     background: #fff;

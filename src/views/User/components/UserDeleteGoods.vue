@@ -1,51 +1,42 @@
 <script setup>
-import { getUserOrder } from "@/apis/order";
-import { onMounted, ref } from "vue";
-import { addLink } from "@/apis/chat";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { getGoodsList, deleteGoodsAPI } from "@/apis/goods";
+// import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
+import { onMounted, ref } from "vue";
 // tab列表
-const tabTypes = [
-  { name: "all", label: "全部订单" },
-  { name: "proceessing", label: "订单处理中" },
-  { name: "success", label: "订单完成" },
-  { name: "failed", label: "订单失败" },
-];
+const tabTypes = [{ name: "all", label: "全部待售商品" }];
 // 订单列表
-const orderList = ref([]);
+const goodsList = ref([]);
 const total = ref(0);
 const params = ref({
   pageNum: 1,
   pageSize: 3,
-  orderState: 0,
+  soldState: 0,
 });
-const getOrderList = async () => {
-  const res = await getUserOrder(params.value);
-  orderList.value = res.data.rows;
+const getGoods = async () => {
+  const res = await getGoodsList(params.value);
+  goodsList.value = res.data.rows;
   total.value = Number(res.data.totalNum);
 };
+// const router = useRouter();
+onMounted(() => getGoods());
 
-onMounted(() => getOrderList());
-
-const tabChange = (type) => {
-  params.value.orderState = type;
-  getOrderList();
-};
 const pageChange = (page) => {
   params.value.pageNum = page;
-  getOrderList();
+  getGoods();
 };
-const chatToOwner = async (ownerId) => {
-  console.log(ownerId);
-  await addLink(ownerId);
-  router.push("/user/chat");
+const deleteGoods = async (gId) => {
+  await deleteGoodsAPI(gId);
+  ElMessage({ type: "success", message: "商品下架成功" });
+  // router.push({ path: "/user/deleteGoods" });
+  location.reload();
 };
 </script>
 
 <template>
-  <div class="order-container">
-    <el-tabs @tab-change="tabChange">
+  <div class="goods-container">
+    <el-tabs>
       <!-- tab切换 -->
       <el-tab-pane
         v-for="item in tabTypes"
@@ -54,58 +45,47 @@ const chatToOwner = async (ownerId) => {
       />
 
       <div class="main-container">
-        <div class="holder-container" v-if="orderList.length === 0">
-          <el-empty description="暂无订单数据" />
+        <div class="holder-container" v-if="goodsList.length === 0">
+          <el-empty description="暂无商品数据" />
         </div>
         <div v-else>
-          <!-- 订单列表 -->
-          <div class="order-item" v-for="order in orderList" :key="order.id">
+          <div class="goods-item" v-for="goods in goodsList" :key="goods.id">
             <div class="head">
-              <span>下单时间：{{ order.createTime }}</span>
+              <span>上传时间：{{ goods.createTime }}</span>
             </div>
             <div class="body">
               <div class="column goods">
                 <ul>
                   <li>
                     <a class="image" href="javascript:;">
-                      <img :src="order.thumbnail" alt="" />
+                      <img :src="goods.thumbnail" alt="" />
                     </a>
                     <div class="info">
                       <p class="name ellipsis-2">
-                        {{ order.name }}
+                        {{ goods.name }}
                       </p>
                       <p class="attr ellipsis">
-                        <span>{{ order.title }}</span>
+                        <span>{{ goods.title }}</span>
                       </p>
                     </div>
                     <div class="column state">
-                      {{
-                        order.state == 0
-                          ? "交易处理中"
-                          : order.state == 1
-                          ? "交易成功"
-                          : "交易失败"
-                      }}
+                      {{ goods.state == 0 ? "审核通过" : "审核中" }}
                     </div>
                   </li>
                 </ul>
               </div>
-              <div class="column amount" v-if="order.state == 1">
-                <p>
-                  卖方同学已同意交易，可通过<br />QQ：{{ order.qqNumber }}<br />
-                  联系对方，商讨交接事宜
-                </p>
-              </div>
-              <div class="column amount" v-if="order.state == 1">
-                <el-button
-                  type="success"
-                  size="large"
-                  @click="chatToOwner(order.ownerId)"
-                  >联系卖家</el-button
-                >
+              <div class="column amount">
+                <p class="red">¥{{ goods.prize }}</p>
               </div>
               <div class="column amount">
-                <p class="red">¥{{ order.prize }}</p>
+                <el-popconfirm
+                  title="确认下架商品吗?"
+                  @confirm="deleteGoods(goods.gId)"
+                >
+                  <template #reference>
+                    <el-button type="danger" size="large">下架商品</el-button>
+                  </template>
+                </el-popconfirm>
               </div>
             </div>
           </div>
@@ -126,7 +106,7 @@ const chatToOwner = async (ownerId) => {
 </template>
 
 <style scoped lang="scss">
-.order-container {
+.goods-container {
   padding: 10px 20px;
 
   .pagination-container {
@@ -146,7 +126,7 @@ const chatToOwner = async (ownerId) => {
   }
 }
 
-.order-item {
+.goods-item {
   margin-bottom: 20px;
   border: 1px solid #f5f5f5;
 

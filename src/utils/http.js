@@ -6,7 +6,7 @@ import "element-plus/theme-chalk/el-message.css";
 const httpInstance = axios.create({
   // baseURL: "http://market.somebodycn.xyz:7886",
   baseURL: "http://localhost:7886",
-  timeout: 5000,
+  timeout: 10000,
 });
 
 //拦截器
