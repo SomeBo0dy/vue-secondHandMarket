@@ -1,12 +1,14 @@
 <script setup>
 import { getGoodsDetailById } from "@/apis/goods";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { useGoodsStore } from "@/stores/goods";
+import { addLink } from "@/apis/chat";
+
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 const userInfo = ref(userStore.userInfo);
-
+const router = useRouter();
 const goodsStore = useGoodsStore();
 const goods = ref({});
 const route = useRoute();
@@ -15,7 +17,11 @@ const getGoods = async () => {
   goods.value = res.data;
   goodsStore.goods = res.data;
 };
-
+const chatToOwner = async (ownerId) => {
+  console.log(ownerId);
+  await addLink(ownerId);
+  router.push("/user/chat");
+};
 onMounted(() => getGoods());
 </script>
 
@@ -25,6 +31,15 @@ onMounted(() => getGoods());
       <div class="owner-info">
         <el-avatar :size="60" :src="goods.avatar" />
         <h2>{{ goods.userName }}</h2>
+        <div style="margin-left: 850px">
+          <el-button
+            v-if="goods.userId != userInfo.userInfoVo.id"
+            type="success"
+            size="large"
+            @click="chatToOwner(goods.userId)"
+            >联系卖家</el-button
+          >
+        </div>
       </div>
       <!-- 商品信息 -->
       <div class="info-container">

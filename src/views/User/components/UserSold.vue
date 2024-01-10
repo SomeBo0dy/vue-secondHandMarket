@@ -1,6 +1,10 @@
 <script setup>
 import { getUserDeal, updateOrder } from "@/apis/order";
 import { onMounted, ref } from "vue";
+import { addLink } from "@/apis/chat";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 // tab列表
 const tabTypes = [
   { name: "all", label: "全部交易" },
@@ -39,6 +43,12 @@ const accept = (order) => {
 const reject = (order) => {
   order.state = 2;
   updateOrder(order);
+};
+
+const chatToOwner = async (ownerId) => {
+  console.log(ownerId);
+  await addLink(ownerId);
+  router.push("/user/chat");
 };
 </script>
 
@@ -100,6 +110,14 @@ const reject = (order) => {
               <div class="column amount" v-if="order.state == 0">
                 <el-button type="danger" size="large" @click="reject(order)"
                   >拒绝交易</el-button
+                >
+              </div>
+              <div class="column amount" v-if="order.state == 1">
+                <el-button
+                  type="success"
+                  size="large"
+                  @click="chatToOwner(order.uId)"
+                  >联系买家</el-button
                 >
               </div>
             </div>

@@ -31,6 +31,13 @@ export function uploadGoodsAPI(goods) {
     data: goods,
   });
 }
+export function updateGoodsAPI(goods) {
+  return httpInstance({
+    url: "/user/goods/update",
+    method: "PUT",
+    data: goods,
+  });
+}
 export function deleteGoodsAPI(gId) {
   return httpInstance({
     url: `/user/goods/${gId}`,

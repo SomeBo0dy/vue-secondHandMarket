@@ -14,6 +14,8 @@ import UserGoods from "@/views/User/components/UserGoods.vue";
 import UserSold from "@/views/User/components/UserSold.vue";
 import UserAddGoods from "@/views/User/components/UserAddGoods.vue";
 import UserDeleteGoods from "@/views/User/components/UserDeleteGoods.vue";
+import GoodsEdit from "@/views/User/components/GoodsEdit.vue";
+
 import Chat from "@/views/User/components/Chat.vue";
 
 import Checkout from "@/views/Checkout/index.vue";
@@ -60,6 +62,10 @@ const router = createRouter({
             {
               path: "edit",
               component: UserEdit,
+            },
+            {
+              path: "editGoods",
+              component: GoodsEdit,
             },
             {
               path: "goods",

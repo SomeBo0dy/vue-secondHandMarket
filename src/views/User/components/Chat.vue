@@ -5,7 +5,7 @@ import { getUserChatListAPI, getMessageAPI } from "@/apis/chat";
 const userStore = useUserStore();
 const userInfo = ref(userStore.userInfo.userInfoVo);
 // let websocket = new WebSocket("ws://127.0.0.1:7886/websocket");
-const ws = new WebSocket(`ws://market.somebodycn.xyz:7886/websocket`);
+const ws = new WebSocket(`ws://localhost:7886/websocket`);
 const msg = ref({
   linkId: 0,
   fromUser: userInfo.value.id,

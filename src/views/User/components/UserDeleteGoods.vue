@@ -2,8 +2,13 @@
 import { getGoodsList, deleteGoodsAPI } from "@/apis/goods";
 // import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
+import { useGoodsStore } from "@/stores/goods";
+import { useRouter } from "vue-router";
 
 import { onMounted, ref } from "vue";
+const goodsStore = useGoodsStore();
+const router = useRouter();
+
 // tab列表
 const tabTypes = [{ name: "all", label: "全部待售商品" }];
 // 订单列表
@@ -31,6 +36,10 @@ const deleteGoods = async (gId) => {
   ElMessage({ type: "success", message: "商品下架成功" });
   // router.push({ path: "/user/deleteGoods" });
   location.reload();
+};
+const editGood = (goods) => {
+  goodsStore.goods = goods;
+  router.replace('editGoods')
 };
 </script>
 
@@ -76,6 +85,11 @@ const deleteGoods = async (gId) => {
               </div>
               <div class="column amount">
                 <p class="red">¥{{ goods.prize }}</p>
+              </div>
+              <div class="column amount">
+                <el-button size="large" @click="editGood(goods)"
+                  >编辑商品信息</el-button
+                >
               </div>
               <div class="column amount">
                 <el-popconfirm

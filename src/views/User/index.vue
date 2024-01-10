@@ -14,7 +14,7 @@
         <h4>商品管理</h4>
         <div class="links">
           <RouterLink to="/user/addGoods">上架商品</RouterLink>
-          <RouterLink to="/user/deleteGoods">下架商品</RouterLink>
+          <RouterLink to="/user/deleteGoods">下架/编辑商品</RouterLink>
         </div>
         <h4>交易管理</h4>
         <div class="links">

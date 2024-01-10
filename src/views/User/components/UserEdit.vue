@@ -28,7 +28,7 @@ const rules = {
   sex: [
     {
       required: true,
-      message: "请选择商品种类",
+      message: "请选择性别",
       trigger: "change",
       //   type: "number",
     },
