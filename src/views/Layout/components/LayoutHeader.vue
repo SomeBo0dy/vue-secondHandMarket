@@ -14,7 +14,7 @@ const categoryStore = useCategoryStore();
       <h1 class="logo">
         <RouterLink to="/">福鱼</RouterLink>
       </h1>
-      <ul class="app-header-nav" v-if="userInfo.type === '0'">
+      <ul class="app-header-nav" v-if="!userInfo || userInfo.type === '0'">
         <li
           class="home"
           v-for="item in categoryStore.categoryList"

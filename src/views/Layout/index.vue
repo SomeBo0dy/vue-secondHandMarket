@@ -17,7 +17,7 @@ onMounted(() => categoryStore.getCategory());
 </script>
 
 <template>
-  <LayoutFixedHeader v-if="userInfo.type === '0'" />
+  <LayoutFixedHeader v-if="!userInfo || userInfo.type === '0'" />
   <LayoutNav />
   <LayoutHeader />
   <RouterView />

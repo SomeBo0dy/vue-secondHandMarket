@@ -265,7 +265,9 @@ const chatToOwner = async (ownerId) => {
 
       &.amount {
         width: 200px;
-
+        display: flex;
+        justify-content: center;
+        align-items: center;
         .red {
           color: $priceColor;
         }

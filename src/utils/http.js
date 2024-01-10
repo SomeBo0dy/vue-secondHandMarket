@@ -4,8 +4,8 @@ import { useUserStore } from "@/stores/user";
 import "element-plus/theme-chalk/el-message.css";
 
 const httpInstance = axios.create({
-  // baseURL: "http://market.somebodycn.xyz:7886",
-  baseURL: "http://localhost:7886",
+  baseURL: "http://market.somebodycn.xyz:7886",
+  // baseURL: "http://localhost:7886",
   timeout: 10000,
 });
 
